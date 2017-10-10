@@ -1,45 +1,30 @@
 *ps2
 *Aditi Manke
 *Data Management
+//great! good preamble with clear and concise information
 
+//and good description of data, btw can also block comment many lines
+/* this
+is
+a 
+block
+comment
+*/
+
+//and good description of what you are trying to do here!
 //The data is publically available on CAIT Climate Data Explorer, World Resources Institute//
 //This dataset focuses on the hostorical emissions of U.S. states from 1990-2011//
 //some commands are taken from my previous project on climate change//
 //aim to merge it with local city database, which covers performance of cities on being energy efficient//
 
 //importing and restructuring data//
-insheet using "https://docs.google.com/uc?id=0B-xd5ZLItEIeekoxWHJuX19oZDQ&export=download",clear
+insheet using "https://docs.google.com/uc?id=0B-xd5ZLItEIeekoxWHJuX19oZDQ&export=download",clear 
 
 cd "D:\PhD Public Affairs\Fall 2017\DataManagement"
 
-//to get rid of first row
-drop in 1/1
-
-//to destring other variables
-destring v2, replace
-destring emissionstotals, replace
-destring v4, replace
-destring emissionsbygas, replace
-destring v6, replace
-destring v7, replace
-destring v8, replace
-destring emissionsbysector, replace
-destring v10, replace
-destring v11, replace
-destring v12, replace
-destring v13, replace
-destring v14, replace
-destring energyemissionsbysubsector, replace
-destring v16, replace
-destring v17, replace
-destring v18, replace
-destring v19, replace
-destring v20, replace
-destring socioeconomicdata, replace
-destring v22, replace
-destring v23, replace
 
 //renaming variables
+//maybe personal prefrence, but most people dont capitalize first letter of var name
 rename v1 State
 rename v2 Year
 rename emissionstotals GHGExc
@@ -66,37 +51,55 @@ rename v23 EnergyUse
 rename vehiclesper1000people Vehicles
 rename meantraveltimetowork Traveltime
 
-save GHG, replace
-clear
+l in 1 //can nicely see how things are named now and what they used to be
+
+//and now get rid of first row
+drop in 1/1
+
+//to destring other variables
+destring *, replace
+
+
+save GHG, replace  //this part doesnt make sense you clear memory so there is nothing to work with
+//! it breaks here; guess you meant to load it back here
+use GHG, clear
 
 //keeping data of one year//
-tostring Year, replace
-keep if Year=="2011"
+keep if Year==2011
 drop if State=="United States"
 
 //gen & replace//
 tab StateGDP
 tab StateGDP, mi
 
+//could explain here that you gen a dummy for mean, and better yet label properlu;
+//and name of var should be like gdpMean or sth like that
 generate gdp=.
 replace gdp=1 if StateGDP>256995.5
 replace gdp=0 if StateGDP>0 & StateGDP<256995.5
+la var gdp "gdp gt mean"
 
+//same here
 gen trans=.
 replace trans=1 if Transportation>37.06764
 replace trans=0 if Transportation>0 & Transportation<37.06764
 
+//this part doesnt do anything
+/*
 //Egen//
 use GHG, clear
 tostring Year, replace
 keep if Year=="2011"
 drop if State=="United States"
+*/
 
 egen avg_StateGDP=mean(StateGDP) 
 //taking average of State GDP and later observing the relation between GDP and state emissions//
 gen dev_StateGDP=StateGDP-avg_StateGDP 
 //looking at how much individual state gdp's deviate from the average//
 bys State: egen avgState_StateGDP=mean(StateGDP) //sorted original GDP of each state respectively//
+
+
 
 //collapse//
 ssc install dataex
@@ -160,6 +163,13 @@ label def census_region 2 "Midwest", modify
 label def census_region 3 "South", modify
 label def census_region 4 "West", modify
 
+//there is a big mistake here!
+ edit State name //places do not match!! should rather save the inputed names on hd
+ //and then merge them!
+
+
+
+
 collapse StateGDP Transportation, by(census_region)
 l
 //looking at the average gdp and emissions from transportation sector region wise//
@@ -187,9 +197,12 @@ l State avg_StateGDP avg_Traveltime GDP TT in 1/20, nola
 //or the distance from home to work is much greater. 
 
 /*merge*/
-use GHG, clear
+use GHG, clear //again this doesntmakes sense--it is kind of dangling there; 
+//and doesnt do anything beacuse the next insheet destroys it
 
 insheet using "https://docs.google.com/uc?id=0B-xd5ZLItEIeYkJLdmFITFVDams&export=download", clear
+ta state //these are 2 letter codes! should have a corresponding codes in the other dataset!
+//and there are many--so should collapse them!
 rename state State
 
 save aceee, replace
@@ -197,7 +210,10 @@ clear
 
 
 use GHG,clear
+ta State
+keep if Year==2011
+
 merge 1:1 State using aceee.dta
 //error r(459), variable State does not uniquely identify observations in the master data//
 
-
+//good start! but needs more work and care!!
