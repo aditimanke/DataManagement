@@ -2,12 +2,19 @@
 *Aditi Manke
 *Data Management
 
+//as i was telling others--may make sense to  download all the data just once and for all
+//as a zipped file, then unzip and tyhen do everything on HD :)
+//https://blog.stata.com/2010/12/01/automating-web-downloads-and-file-unzipping/
+
 cd "D:\PhD Public Affairs\Fall 2017\DataManagement"
 
 /*************importing first dataset************/
 //The data is publically available on CAIT Climate Data Explorer, World Resources Institute//
 //This dataset focuses on the hostorical emissions of U.S. states from 1990-2011//
 //some commands are taken from my previous project on climate change//
+
+//but still i dont have these data--must either load from that website or
+//upload a copy to your own website!
 
 use GHG, clear
 tostring Year, replace
@@ -22,7 +29,18 @@ clear
 //The data is publicly available on American Council for an Energy-efficient Economy//
 //The data entails the scores of how cities have performed in being energy efficient//
 
+//love tehse data! a lot of text! stay tuned for upcomming text analysis!
+//and can do sth quick string manipulations now:
+
 insheet using "https://docs.google.com/uc?id=0B-xd5ZLItEIeYkJLdmFITFVDams&export=download", clear
+
+
+gen a1=substr(localgovernmentscore, 1,4)
+destring a1, gen(a2) ignore("ou" "o")
+edit a1 a2 localgovernmentscore
+
+
+
 rename state State
 rename v1 City
 keep City State cityscore transportationscore
@@ -103,10 +121,9 @@ destring Lrail, replace
 destring Crail, replace
 destring Other, replace
 
-drop if State=="United States, total1"
-drop if State=="1Excludes territories (Puerto Rico and Virgin Islands)"
-drop if State=="NOTES:  This table includes data from urban transit agencies that are required to report information to the federal government because they applied for or are direct beneficiaries of urbanized area formula grants (49 USC 5307). Beginning in 2012, data include estimated industry totals for agencies with a Small Systems Waiver in place and Rural reporters. Data are assigned to the state of a transit agency's mailing address.  Details may not add to totals due to rounding. Light rail includes light rail, street car, and hybrid rail modes. Motorbus includes motorbus, commuter bus, and bus rapid transit. Other includes automated guideway, cable car, demand response, ferry boat, inclined plane, monorail, trolley bus, and van pool."
-drop if State=="SOURCE: U.S. Department of Transportation, Federal Transit Adminstration, National Transit Database, table 19, available at www.ntdprogram.gov as of July 2015."
+di length("sadas")
+drop if length(State)>15
+compress
 
 save ridership, replace
 clear
@@ -156,8 +173,10 @@ merge 1:m State using aceee.dta
 
 rename _merge merge4
 
-save adi_ps3,replace
+save adi_ps3,replace, replace
 clear
+
+//cannot check it --dont gaev fiorst data set so not sure if that would run
 
 /***reshape***/
 // all the variables in this dataset are long//
@@ -166,3 +185,6 @@ gen id=_n
 reshape wide Crail, i(id) j(State,string) 
 //here Crail is percent of people commuting via rail at state level//
 
+//start doing descritive stats like scatterplots, histograms, barcharts
+//get to know your data well--can use loops to do descriptive stats
+//can use macros for google url--ask kate!
