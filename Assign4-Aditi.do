@@ -1,3 +1,6 @@
+//in general could start on reorganizing this and making it tigher more effiicent
+//and looking forward to more descriptive stats and some fascinating results!
+
 *ps4
 *Aditi Manke
 *Data Management
@@ -94,6 +97,9 @@ else {
 
 /****other way****/ //following code is not working//
 generate gpd=.
+
+//many of these loops not very useful like this one
+//they do not loop over many variables just one, so that doesnt help much
 local s StateGDP
 foreach var of varlist `s'{
 replace gpd=1 if `var'>256995.5 replace gpd=0 if `var'>0 & `var'<256995.5
@@ -310,6 +316,8 @@ local c1 EnergyUse StateGDP Population
 reg CO2 `c'
 reg CO2 `c1'
 //doing analyses region wise, trying to explore if there is any effect on carbon emissions by travel mode region wise//
+
+//this is fine, but again, maybe use census regions
 input str734 name byte region
 "Alabama"        3
 "Alaska"         4
@@ -369,14 +377,14 @@ foreach v of local vars {
 label def `v' 1 "Northeast" 2 "Midwest" 3 "South" 4 "West", modify
 label val `v' `v'
 } 
-//other way of doing it//
+//other way of doing it// great!
 label values census_region census_region
 label def census_region 1 "Northeast", modify
 label def census_region 2 "Midwest", modify
 label def census_region 3 "South", modify
 label def census_region 4 "West", modify
 
-
+//this would work great with outreg2 or estout--we will discuss them soon!
 levelsof region,loc(re)
 foreach v of varlist Passtrip workers Transportation {
 foreach r of local re{
