@@ -5,6 +5,9 @@
 cd "D:\PhD Public Affairs\Fall 2017\DataManagement"
 
 /* The aim here is to establish a reltionship between public transit and carbon emissions
+
+see lit, eg: https://scholar.google.com/scholar?hl=en&as_sdt=0%2C31&q=public+transit+and+carbon+emissions&btnG=
+
 My project is about the role public transit can play in reducing carbon emissions.
 I am going to use state level data for now and I intend to do metro level analysis for my future work
 and research paper.*/
@@ -15,9 +18,12 @@ and research paper.*/
 /*The data is publically available on CAIT Climate Data Explorer, World Resources Institute
 This dataset focuses on the hostorical emissions of U.S. states from 1990-2011*/
 insheet using "https://docs.google.com/uc?id=0B-xd5ZLItEIeekoxWHJuX19oZDQ&export=download",clear
+//could add option 'firstr'
+
 drop in 1/1
 foreach var of varlist _all {
-if "`var'" != "v1" capture destring `var', replace force
+if "`var'" != "v1" capture destring `var', replace force //be careful with force otipon
+//it may do unintended things!!
 }
 //renaming variables//
 rename v1 State
@@ -46,15 +52,29 @@ rename v23 EnergyUse
 rename vehiclesper1000people Vehicles
 rename meantraveltimetowork Traveltime
 save GHG, replace
-clear
+
+
 //looking at historical emissions of United States over the years//
-use GHG
+use GHG,clear
 keep if State=="United States"
-line CO2 Year, mlabel(Year), ytitle(Carbon emissions) xtitle(Year)
+
+line CO2 Year, mlabel(Year) ytitle("Carbon emissions") xtitle("Year")
+
 //emissions of California state//
 use GHG
 keep if State=="California"
 twoway(scatter CO2 StateGDP, mlabel(Year)) (lfit CO2 StateGDP), ytitle("Carbon Emissions")xtitle("CA GDP")
+
+
+//maybe overlay the two, eg
+use GHG,clear
+tw(line CO2 Year if State=="Texas", mlabel(Year) ytitle("Carbon emissions") xtitle("Year"))(line CO2 Year if State=="California", mlabel(Year) ytitle("Carbon emissions") xtitle("Year"))
+
+//or to get quick overview
+line CO2 Year if State!="United States" &  State!="Texas"&  State!="California", mlabel(Year) ytitle("Carbon emissions") xtitle("Year") by(State)
+
+
+//organioze better--move these regressions to after merge where you have other regreessions
 //Regressions//
 use GHG
 keep if Year=="2011"
@@ -81,6 +101,7 @@ replace trans=0 if `var'>0 & `var'<37.06764
 
 reg CO2 gdp trans
 outreg using ps5.doc, append ctitle(Model 3)
+//again, read literature to see how tomodel them!
 
                               **************************
                               ********Section Two*******
@@ -318,3 +339,5 @@ replace `v'="District of Columbia" if `v'=="DC"
 save aceee, replace
 clear							
 //still have to add data for this section//
+
+//in general should first do cleaning then mergeing then descriptive stats and then regressions
