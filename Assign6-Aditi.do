@@ -163,9 +163,14 @@ clear
 insheet using "https://docs.google.com/uc?id=0B-xd5ZLItEIeRS0ycUNOT2ZCOFE&export=download", clear
 drop in 1/3
 //destring variables using loop//
-foreach var of varlist _all {
-if "`var'" != "v1" capture destring `var', replace force
-}
+destring v1, replace
+destring v2, replace
+destring v3, replace
+destring v4, replace
+destring v5, replace
+destring v6, replace
+destring v7, replace
+destring v8, replace
 rename v1 State
 rename v2 Agencies
 rename v3 Passtrips
