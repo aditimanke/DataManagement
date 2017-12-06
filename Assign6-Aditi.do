@@ -382,6 +382,14 @@ replace `var' = subinstr(`var',",","",.)
 destring `var', replace
 }  
 destring passengersperhour, replace
+//making my own data dictionary for variables in stata //
+note uzapop: The population of the urbanized area primarily served by the agency.
+note passtrips: The number of passengers who board public transportation vehicles. Passengers are counted each time they board a vehicle no matter how many vehicles they use to travel from their origin to their destination.
+note passengermiles: The cumulative sum of the distances ridden by each passenger.
+note dieselgal: Gallons of conventional (petroleum) diesel fuel used.
+note gasolinegal: Gallons of gasoline used.
+note electricpropulsionkwh: Kilowatt-hours of electricity used to propel vehicles by directly providing power via a third rail or overhead catenary.
+note diesel: Agencies report use of conventional diesel and biodiesel separately, but do not report the miles traveled by conventional diesel- and biodiesel-fueled vehicles separately. This table reflects that reporting structure. Gallons of conventional diesel and gallons of biodiesel used are added together to calculate miles per gallon for diesel vehicles.
 save ps6, replace
 /****trying to understand the dataset and correlation between variables. For this I will
 focus only on one state****/
