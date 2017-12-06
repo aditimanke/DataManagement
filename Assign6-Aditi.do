@@ -345,6 +345,7 @@ rename name Agency
 rename city City
 rename state State
 rename tos typeofservice
+tostring ntdid, replace
 keep Agency City State legacyntdid ntdid organizationtype primaryuzapopulation agencyvoms mode typeofservice modevoms dieselgal gasolinegal electricpropulsionkwh diesel gasoline electricpropulsion
 save Fuel6, replace
 clear   
