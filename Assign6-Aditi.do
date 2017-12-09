@@ -2,6 +2,11 @@
 *Aditi Manke
 *Data Management 
 cd "D:\PhD Public Affairs\Fall 2017\DataManagement"
+
+//great to have this part here beefed up; i think this is awesome topic with great future!
+.//btw you may also read this regularly--a lot on urban tranportation there; one of my favorite news:
+//https://www.citylab.com/
+
 /*The aim here is to establish a relationship between transportation and carbon emissions and how it
 affects climate or climate change.The different transit modes to study are buses, trains, and trams. Commute in between cities is dominated by
 high-rail, airlines and coaches. In my research the focus will be only on public transit systems
@@ -40,6 +45,8 @@ https://database.aceee.org/city-scorecard-rank
 This dataset focuses on the hostorical emissions of U.S. states from 1990-2011*/
 insheet using "https://docs.google.com/uc?id=0B-xd5ZLItEIeekoxWHJuX19oZDQ&export=download",clear
 drop in 1/1
+
+//why not just destring * or at least destring v*, this is cumbersome
 destring v2, replace
 destring emissionstotals, replace
 destring v4, replace
@@ -88,7 +95,7 @@ rename v22 Population
 rename v23 EnergyUse
 rename vehiclesper1000people Vehicles
 rename meantraveltimetowork Traveltime
-//Label Variables//
+//Label Variables//  //great
 la var CO2 "Carbon dioxide Emissions"
 la var StateGDP "GDP of State"
 la var EnergyUse "Energy Consumption"
@@ -109,14 +116,17 @@ clear
 use GHG
 keep if Year=="2011"
 drop if State=="United States"
-corr CO2 StateGDP
+//can corr all of them at the same time, and can also do a plot of all
+gr matrix CO2 StateGDP  Transportation Population, half
+corr CO2 StateGDP 
 corr CO2 Transportation
 corr StateGDP Transportation
 corr Population Transportation
 //Regressions//
 local c StateGDP Population
 reg CO2 `c'
-outreg2 using ps6.doc, replace ctitle(Model 1)
+outreg2 using ps6.doc, replace ctitle(Model 1) //this may work but it may be more productive to output to xls
+//and organize there !
 reg CO2 EnergyUse `c'
 outreg2 using ps6.doc, append ctitle(Model 2)
 //Dummy variables//
@@ -351,7 +361,7 @@ save Fuel6, replace
 clear   
 //merge datasets//
 use Service6, clear
-merge m:m State using Fuel6.dta
+merge m:m State using Fuel6.dta //again think more about m:m! probably wrong!
 rename _merge merge1
 //second merge//
 merge m:m State using aceee.dta
@@ -405,3 +415,6 @@ reshape wide uzapop passtrips passengermiles dieselgal gasolinegal electricpropu
 graph bar uzapopMB_DO passtripsMB_DO, over(dieselMB_DO)
 compress
 graph bar uzapopMB_DO passtripsMB_DO, over(City)
+
+//again, very important topic with great future! i would keep on working on it and most
+//importanlty draft a paper asap and submit for publication! publish or perish!
